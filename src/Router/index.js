@@ -1,44 +1,44 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import {BrowserRouter as Router, Route, Link} from "react-router-dom";
 import Loadable from 'react-loadable';
 import loading from '../Components/loading'
 
-const home = Loadable({
-    loader: () => import('../Pages/home'), // oh no!
-    loading: loading,
-});
-const about = Loadable({
-    loader: () => import('../Pages/About'), // oh no!
-    loading: loading,
-});
-const users = Loadable({
-    loader: () => import('../Pages/Users'), // oh no!
-    loading: loading,
+const splitting = (loader) => Loadable({
+    loader,
+    loading
 });
 
-const obj = {home,about,users}
-
+const router = [
+    {
+        name: 'Home',
+        path: '/home',
+        com: () => import('../Pages/home')
+    }, {
+        name: 'About',
+        path: '/About',
+        com: () => import('../Pages/About')
+    }, {
+        name: 'Users',
+        path: '/Users',
+        com: () => import('../Pages/Users')
+    }, {
+        name: 'Test',
+        path: '/Test',
+        com: () => import('../Pages/Test')
+    }
+]
 
 const AppRouter = () => (
     <Router>
         <div>
             <nav>
                 <ul>
-                    <li>
-                        <Link to="/">Home</Link>
-                    </li>
-                    <li>
-                        <Link to="/about/">About</Link>
-                    </li>
-                    <li>
-                        <Link to="/users/">Users</Link>
-                    </li>
+                    {router.map((item, index) => <li key={`li${index}`}><Link to={item.path}>{item.name}</Link></li>)  }
                 </ul>
             </nav>
 
-            <Route path="/" exact component={obj.home} />
-            <Route path="/about/" component={obj.about} />
-            <Route path="/users/" component={obj.users} />
+            {router.map((item, index) => <Route key={index.toString()} path={item.path}
+                                                component={splitting(item.com)}/>) }
         </div>
     </Router>
 );
